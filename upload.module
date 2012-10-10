@@ -145,18 +145,19 @@ global $fileCrocopath;
  */
 function upload_file_download($filepath) {
   $filepath = file_create_path($filepath);
-  $fileCrocopath = $filepath;
+  /*$fileCrocopath = $filepath;  
   $outputCroco = uploadCrocodoc($filepath);
   $resultUuid = json_decode($outputCroco);
   $uuid = $resultUuid->{"uuid"};
-  $link = mysql_connect('localhost', 'root', 'root');
-  mysql_select_db('drupaldb', $link);
+  $link = mysql_connect('localhost', 'drupalAdmin', 'admin');
+  mysql_select_db('drupal', $link);
   $resultCrocoquery = mysql_query("INSERT INTO testuuidupload (uuid,filename) VALUES ('".$uuid."','".$filepath."')");
+  echo $fileCrocopath;
   if (!$resultCrocoquery) {
 			die('Invalid query: ' . mysql_error());
   }
   else
-     echo "errore crocoquery";
+     echo "errore crocoquery"; */
   
   
   $result = db_query("SELECT f.*, u.nid FROM {files} f INNER JOIN {upload} u ON f.fid = u.fid WHERE filepath = '%s'", $filepath);
@@ -405,7 +406,7 @@ function theme_upload_attachments($files) {
   foreach ($files as $file) {
     $file = (object)$file;
     if ($file->list && empty($file->remove)) {
-      $href = file_create_url($file->filepath);
+      $href = file_create_url($file->filepath);						
       $text = $file->description ? $file->description : $file->filename;
       $rows[] = array(l($text, $href), format_size($file->filesize));
     }
@@ -467,19 +468,30 @@ function upload_save(&$node) {
 
     // Create a new revision, or associate a new file needed.
     if (!empty($node->old_vid) || $file->new) {
+	  
       db_query("INSERT INTO {upload} (fid, nid, vid, list, description, weight) VALUES (%d, %d, %d, %d, '%s', %d)", $file->fid, $node->nid, $node->vid, $file->list, $file->description, $file->weight);
       file_set_status($file, FILE_STATUS_PERMANENT);
-	   $outputCroco = uploadCrocodoc($fileCrocopath);
+      $path="C:/xampp/htdocs/mydomain.drupal/";     
+      $fileCrocopath=$file->filepath;
+	  $fileCroconame = $file->description;
+	  $positionstop = strpos($fileCroconame, ".");
+	  $fileExtension = substr($fileCroconame,$positionstop, strlen($fileCroconame)+1);
+	  if(strcmp($fileExtension, ".pdf") == 0){
+		$totalpath=$path.$fileCrocopath;
+		$fileNid = $node->nid;
+		$outputCroco = uploadCrocodoc($totalpath,false);
 		$resultUuid = json_decode($outputCroco);
 		$uuid = $resultUuid->{"uuid"};
 		$link = mysql_connect('localhost', 'root', 'root');
 		mysql_select_db('drupaldb', $link);
-		$resultCrocoquery = mysql_query("INSERT INTO testuuidupload (uuid,filename) VALUES ('".$uuid."','".$filepath."')");
+		$resultCrocoquery = mysql_query("INSERT INTO testuuidupload (uuid,filename,filepath,nid) VALUES ('".$uuid."','".$fileCroconame."','".$totalpath."','".$fileNid."')");
 		if (!$resultCrocoquery) {
 			die('Invalid query: ' . mysql_error());
 		}
-		else
-			echo "errore crocoquery";
+		else{
+			echo "QUERY EXECUTED";
+		}
+	  }
     }
     // Update existing revision.
     else {

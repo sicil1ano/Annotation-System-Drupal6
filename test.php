@@ -13,34 +13,13 @@
 		
 		$file = 'example.pdf';
 		
-	    $uuid = $croco->upload('C://Users//albert//Desktop//example.pdf', false);
+	    $uuid = $croco->upload('example.pdf', false);
 	 	
 	    $resultUuid = json_decode($uuid);
 		
 		$uuid = $resultUuid->{"uuid"};
 				
 		
-		//$link = mysql_connect('localhost', 'root', 'root');
-		//mysql_select_db('drupaldb', $link);
-		//echo "mysql_ping = " . (mysql_ping($link) ? "LIVE" : "DEAD") . "<br /><br />";
-        //$result = mysql_query('SELECT * FROM testuuidupload');
-        //if (!$result) {
-			//die('Invalid query: ' . mysql_error());
-		//}
-        //echo $result;
-        //while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
-			//printf("uuid: %s  filename: %s", $row[0], $row[1]);  
-		//}
-        
-		
-		//$result = mysql_query("INSERT INTO testuuidupload "."(uuid,filename) "."VALUES "."('$uuid', '$file')");
-		//if (!$result) {
-			//die('Invalid query: ' . mysql_error());
-		//}
-		//echo $result;
-		
-		
-		//mysql_free_result($result);
 		
 	    
 		sleep(7);
@@ -54,7 +33,7 @@
 
 		if(strcmp($status, 'DONE') == 0){
 		    $userID = 1;
-			$userName = "pippo";
+			$userName = "testuser";
 			$session = $croco->createSession($uuid,$userID,$userName);
 		
 			$resultSession = json_decode($session);
@@ -94,7 +73,7 @@ $(document).ready("#submit").click(function() {
 <iframe name="frameview" id="frameview" src="" width="800" height="500"></iframe>
 </p></br>
 <br><p><button id="downloadFile">Download File</button></p></br>
-<p><a href="ciao.html" id="link">Download</a></p>
+<p><a href="test.html" id="link">Download</a></p>
 </form>
 </body>
 </html>
